@@ -1,0 +1,82 @@
+﻿<Window x:Class="CourseWork.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d"
+        Title="MainWindow" Height="450" Width="230"
+        WindowStartupLocation="CenterScreen"
+        KeyDown="Window_KeyDown">
+    <Window.Resources>
+        <Style TargetType="TextBox" BasedOn="{StaticResource {x:Type TextBox}}">
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="TextBox">
+                        <Grid>
+                            <Border Background="{TemplateBinding Background}"
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="{TemplateBinding BorderThickness}"/>
+                            <TextBlock x:Name="PlaceholderText"
+                                   Text="{TemplateBinding Tag}"
+                                   Visibility="Collapsed"
+                                   Margin="5,0,0,0"
+                                   FontSize="14"
+                                   HorizontalAlignment="Center"
+                                   VerticalAlignment="Center"
+                                   Foreground="Gray"/>
+                            <ScrollViewer x:Name="PART_ContentHost" />
+                        </Grid>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="Text" Value="">
+                                <Setter TargetName="PlaceholderText" Property="Visibility" Value="Visible"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </Window.Resources>
+    <Grid>
+        <!-- Main Menu -->
+        <Menu>
+            <MenuItem Header="_File">
+                <MenuItem Header="_New" Click="NewDataset_Click"/>
+                <MenuItem Header="_Open" Click="OpenDataset_Click"/>
+                <MenuItem Header="_Save" Click="SaveDataset_Click"/>
+                <MenuItem Header="_Save as" Click="SaveDatasetAs_Click"/>
+                <MenuItem Header="_Export as" Click="SaveDatasetAs_Click"/>
+                <Separator/>
+                <MenuItem Header="_Exit"/>
+            </MenuItem>
+            <!-- Other Menu Items -->
+        </Menu>
+        <!-- Input Fields, Data Tables, Text Boxes -->
+        <DockPanel Margin="7,30,0,7" HorizontalAlignment="Left" Width="200">
+            <TextBlock DockPanel.Dock="Top" Text="ENTER POINTS:" FontWeight="Bold"/>
+            <!-- Data Tables, Text Boxes, Input Fields -->
+            <!-- Example: -->
+            <TextBox x:Name="xInput" DockPanel.Dock="Top" Margin="0, 10, 0, 0" Tag="X" Width="200" Height="30" HorizontalAlignment="Left" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"/>
+            <TextBox x:Name="yInput" DockPanel.Dock="Top" Margin="0, 10, 0, 5" Tag="Y" Width="200" Height="30" HorizontalAlignment="Left" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"/>
+            <!-- Other Input Fields -->
+
+            <DockPanel DockPanel.Dock="Top" Width="200">
+                <Button Content="Save point" Click="SavePoint_Click" Width="95" Height="30"/>
+                <Button Content="Remove last point" Click="RemovePoint_Click" Width="100" Height="30" HorizontalAlignment="Right"/>
+            </DockPanel>
+            <DockPanel DockPanel.Dock="Top" Width="200" Margin="0, 5, 0, 0">
+                <Button Content="Calculate" Click="Calculate_Click" Width="95" Height="30"/>
+                <Button Content="Show graph" Click="ShowGraph_Click" Width="100" Height="30" HorizontalAlignment="Right"/>
+            </DockPanel>
+
+            <StackPanel DockPanel.Dock="Bottom" Width="200" HorizontalAlignment="Left">
+                <TextBlock Text="Points:" FontWeight="Bold" Margin="0,5,0,5"/>
+                <TextBox x:Name="pointsList" IsReadOnly="True" Height="130" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" VerticalScrollBarVisibility="Auto"/>
+            </StackPanel>
+
+            <DockPanel Margin="0, 15, 0, 0" x:Name="functionsRadio">
+                <RadioButton x:Name="fxRadioButton" Content="f(x)" GroupName="functions" IsChecked="True" FontSize="20" VerticalContentAlignment="Center" Click="fxRadioButton_Click"/>
+                <RadioButton x:Name="gxRadioButton" Content="g(x)" GroupName="functions" IsChecked="False" RenderTransformOrigin="0.094,-1.136" HorizontalAlignment="Right" FontSize="20" VerticalContentAlignment="Center" Click="gxRadioButton_Click"/>
+            </DockPanel>
+        </DockPanel>
+    </Grid>
+</Window>
