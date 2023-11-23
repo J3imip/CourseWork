@@ -1,5 +1,6 @@
 ﻿using Microsoft.Win32;
 using System;
+using System.Collections.ObjectModel;
 using System.Windows;
 using System.Windows.Input;
 
@@ -11,6 +12,8 @@ namespace CourseWork
     public partial class MainWindow : Window
     {
         DataModel dataModel = new DataModel();
+		private ObservableCollection<Point> pointViewModels = new();
+
 		string filePath = "";
 		string GraphSvg = "";
 		GraphWindow graphWindow;
@@ -18,37 +21,44 @@ namespace CourseWork
 		public MainWindow()
 		{
 			InitializeComponent();
-			GraphWindow graphWindow = new GraphWindow(dataModel);
-			GraphSvg = graphWindow.GetGraphSvg();
-		}
-		private void SavePoint_Click(object sender, RoutedEventArgs e)
-		{
-			if (xInput.Text == "" || yInput.Text == "") return;
 
+			DataModel dataModel = new DataModel();
+
+			graphWindow = new GraphWindow(dataModel);
+			GraphSvg = graphWindow.GetGraphSvg();
+			pointsGrid.ItemsSource = pointViewModels;
+		}
+		private void Clear_Click(object sender, RoutedEventArgs e)
+		{
 			var functionChosen = fxRadioButton.IsChecked.GetValueOrDefault() ? "fx" : "gx";
 
-			dataModel.AddPoint(functionChosen, new Point { X = double.Parse(xInput.Text), Y = double.Parse(yInput.Text) });
-
-			pointsList.Text = dataModel.ToString(functionChosen);
+			dataModel.ClearPoints(functionChosen);
+			pointViewModels.Clear();
+			pointsGrid.ItemsSource = pointViewModels;
 		}
 		private void RemovePoint_Click(object sender, RoutedEventArgs e)
 		{
 			var functionChosen = fxRadioButton.IsChecked.GetValueOrDefault() ? "fx" : "gx";
 
-			dataModel.RemoveLastPoint(functionChosen);
-
-			pointsList.Text = dataModel.ToString(functionChosen);
+			if (pointsGrid.SelectedItem != null)
+			{
+				var selectedPoint = (Point)pointsGrid.SelectedItem;
+				pointViewModels.Remove(selectedPoint);
+				pointsGrid.ItemsSource = pointViewModels;
+				dataModel.RemovePoint(selectedPoint, functionChosen);
+			}
 		}
 
 		private void fxRadioButton_Click(object sender, RoutedEventArgs e)
 		{
-			pointsList.Text = dataModel.ToString("fx");
+			pointViewModels = new ObservableCollection<Point>(dataModel.GetPoints("fx"));
+			pointsGrid.ItemsSource = pointViewModels;
 		}
 
 		private void gxRadioButton_Click(object sender, RoutedEventArgs e)
 		{
-			pointsList.Text = dataModel.ToString("gx");
-
+			pointViewModels = new ObservableCollection<Point>(dataModel.GetPoints("gx"));
+			pointsGrid.ItemsSource = pointViewModels;
 		}
 		private void SaveDatasetAs_Click(object sender, RoutedEventArgs e)
 		{
@@ -83,8 +93,8 @@ namespace CourseWork
 				GraphSvg = graphWindow.GetGraphSvg();
 
 				var functionChosen = fxRadioButton.IsChecked.GetValueOrDefault() ? "fx" : "gx";
-
-				pointsList.Text = dataModel.ToString(functionChosen);
+				pointViewModels = new ObservableCollection<Point>(dataModel.GetPoints(functionChosen));
+				pointsGrid.ItemsSource = pointViewModels;
 			}
 		}
 
@@ -146,6 +156,22 @@ namespace CourseWork
 
 				MessageBox.Show("Report exported successfully!", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
 			}
+		}
+
+		protected override void OnClosed(EventArgs e)
+		{
+			base.OnClosed(e);
+
+			Application.Current.Shutdown();
+		}
+
+		private void pointsGrid_RowEditEnding(object sender, System.Windows.Controls.DataGridRowEditEndingEventArgs e)
+		{
+			var functionChosen = fxRadioButton.IsChecked.GetValueOrDefault() ? "fx" : "gx";
+
+			var point = (Point)e.Row.Item;
+			dataModel.RemovePoint(point, functionChosen);
+			dataModel.AddPoint(functionChosen, point);
 		}
 	}
 }

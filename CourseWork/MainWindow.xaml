@@ -4,7 +4,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="230"
+        Title="MainWindow" Height="350" Width="230"
         WindowStartupLocation="CenterScreen"
         KeyDown="Window_KeyDown">
     <Window.Resources>
@@ -52,16 +52,9 @@
         </Menu>
         <!-- Input Fields, Data Tables, Text Boxes -->
         <DockPanel Margin="7,30,0,7" HorizontalAlignment="Left" Width="200">
-            <TextBlock DockPanel.Dock="Top" Text="ENTER POINTS:" FontWeight="Bold"/>
-            <!-- Data Tables, Text Boxes, Input Fields -->
-            <!-- Example: -->
-            <TextBox x:Name="xInput" DockPanel.Dock="Top" Margin="0, 10, 0, 0" Tag="X" Width="200" Height="30" HorizontalAlignment="Left" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"/>
-            <TextBox x:Name="yInput" DockPanel.Dock="Top" Margin="0, 10, 0, 5" Tag="Y" Width="200" Height="30" HorizontalAlignment="Left" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"/>
-            <!-- Other Input Fields -->
-
             <DockPanel DockPanel.Dock="Top" Width="200">
-                <Button Content="Save point" Click="SavePoint_Click" Width="95" Height="30"/>
-                <Button Content="Remove last point" Click="RemovePoint_Click" Width="100" Height="30" HorizontalAlignment="Right"/>
+                <Button Content="Clear" Click="Clear_Click" Width="95" Height="30"/>
+                <Button Content="Remove point" Click="RemovePoint_Click" Width="100" Height="30" HorizontalAlignment="Right"/>
             </DockPanel>
             <DockPanel DockPanel.Dock="Top" Width="200" Margin="0, 5, 0, 0">
                 <Button Content="Calculate" Click="Calculate_Click" Width="95" Height="30"/>
@@ -70,7 +63,20 @@
 
             <StackPanel DockPanel.Dock="Bottom" Width="200" HorizontalAlignment="Left">
                 <TextBlock Text="Points:" FontWeight="Bold" Margin="0,5,0,5"/>
-                <TextBox x:Name="pointsList" IsReadOnly="True" Height="130" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" VerticalScrollBarVisibility="Auto"/>
+                <DataGrid 
+                    x:Name="pointsGrid" 
+                    AutoGenerateColumns="False" 
+                    Height="130" 
+                    HorizontalAlignment="Stretch" 
+                    VerticalAlignment="Stretch" 
+                    VerticalScrollBarVisibility="Auto" 
+                    RowEditEnding="pointsGrid_RowEditEnding" 
+                    CanUserAddRows="True">
+                    <DataGrid.Columns>
+                        <DataGridTextColumn Header="X" Binding="{Binding X}" Width="*" />
+                        <DataGridTextColumn Header="Y" Binding="{Binding Y}" Width="*" />
+                    </DataGrid.Columns>
+                </DataGrid>
             </StackPanel>
 
             <DockPanel Margin="0, 15, 0, 0" x:Name="functionsRadio">

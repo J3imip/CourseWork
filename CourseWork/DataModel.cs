@@ -7,6 +7,14 @@ namespace CourseWork
 	{
 		private Dictionary<string, List<Point>> pointsMap = new Dictionary<string, List<Point>>();
 
+		public void ClearPoints(string functionName)
+		{
+			if (pointsMap.ContainsKey(functionName))
+			{
+				pointsMap[functionName].Clear();
+			}
+		}
+
 		public double GetMinimalX(string functionName)
 		{
 			if (pointsMap.ContainsKey(functionName))
@@ -124,6 +132,13 @@ namespace CourseWork
 			}
 		}
 
+		public void RemovePoint(Point point, string func)
+		{
+			if (pointsMap.ContainsKey(func))
+			{
+				pointsMap[func].Remove(point);
+			}
+		}
 
 		public override string ToString()
 		{
@@ -175,5 +190,4 @@ namespace CourseWork
 		public string Key { get; set; }
 		public List<Point> Points { get; set; }
 	}
-
 }

@@ -95,7 +95,8 @@ namespace CourseWork
 			plotModel.Series.Add(
 				new FunctionSeries(
 				f,
-				-10, 10,
+				DataModel.GetMinimalX("fx") - DataModel.GetMinimalX("gx") - 10.0,
+				DataModel.GetMaximalX("fx") + DataModel.GetMaximalX("gx") + 10.0,
 				1e-3
 				)
 			);
