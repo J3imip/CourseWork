@@ -50,7 +50,7 @@ namespace CourseWork
 
 			return memo.Values.ToList();
 		}
-		static public double FindMinimum(DataModel dataModel, double a, double b, int iter, double eps = (double)0.0001)
+		static public double FindMinimum(Func<double, double> function, double a, double b, int iter, double eps = 0.0001)
 		{
 			var fib = calculateFibonacciTo(iter + 1);
 			double d = (fib[iter - 1] / fib[iter]) * (b - a) + ((double)Math.Pow(-1, iter) / fib[iter] * eps);
@@ -60,7 +60,7 @@ namespace CourseWork
 
 			for (int i = 0; i < iter; i++)
 			{
-				if (LagrangeInterpolation.GetValue(dataModel.GetPoints(), x1) < LagrangeInterpolation.GetValue(dataModel.GetPoints(), x2))
+				if (function(x1) < function(x2))
 				{
 					b = x2;
 					x2 = b - Math.Abs(x1 - a);
@@ -81,7 +81,6 @@ namespace CourseWork
 		}
 	}
 }
-
 
 
 

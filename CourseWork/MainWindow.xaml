@@ -44,7 +44,7 @@
                 <MenuItem Header="_Open" Click="OpenDataset_Click"/>
                 <MenuItem Header="_Save" Click="SaveDataset_Click"/>
                 <MenuItem Header="_Save as" Click="SaveDatasetAs_Click"/>
-                <MenuItem Header="_Export as" Click="SaveDatasetAs_Click"/>
+                <MenuItem Header="_Export as" Click="ExportDatasetAs_Click"/>
                 <Separator/>
                 <MenuItem Header="_Exit"/>
             </MenuItem>

@@ -12,12 +12,15 @@ namespace CourseWork
     {
         DataModel dataModel = new DataModel();
 		string filePath = "";
+		string GraphSvg = "";
+		GraphWindow graphWindow;
 
-        public MainWindow()
-        {
-            InitializeComponent();
-        }
-
+		public MainWindow()
+		{
+			InitializeComponent();
+			GraphWindow graphWindow = new GraphWindow(dataModel);
+			GraphSvg = graphWindow.GetGraphSvg();
+		}
 		private void SavePoint_Click(object sender, RoutedEventArgs e)
 		{
 			if (xInput.Text == "" || yInput.Text == "") return;
@@ -76,6 +79,8 @@ namespace CourseWork
 				filePath = openFileDialog.FileName;
 				XmlHandler serializer = new XmlHandler();
 				dataModel.SetPointsMap(serializer.DeserializeDictionary(filePath));
+				graphWindow = new GraphWindow(dataModel);
+				GraphSvg = graphWindow.GetGraphSvg();
 
 				var functionChosen = fxRadioButton.IsChecked.GetValueOrDefault() ? "fx" : "gx";
 
@@ -105,13 +110,16 @@ namespace CourseWork
 		{
 			try
 			{
+				Func<double, double> f = x => LagrangeInterpolation.GetValue(dataModel.GetPoints("fx"), x) - LagrangeInterpolation.GetValue(dataModel.GetPoints("gx"), x);
+
 				var minX = FunctionCalculator.FindMinimum(
-					dataModel,
-					dataModel.GetMinimalX(),
-					dataModel.GetMaximalX(),
-					20
+					f,
+					dataModel.GetMinimalX("fx") - dataModel.GetMinimalX("gx"),
+					dataModel.GetMaximalX("fx") + dataModel.GetMaximalX("gx"),
+					20,
+					1e-3
 				);
-				var minY = LagrangeInterpolation.GetValue(dataModel.GetPoints(), minX);
+				var minY = f(minX);
 
 				MessageBox.Show($"x: {minX.ToString("0.000")}\ny: {minY.ToString("0.000")}", "Result", MessageBoxButton.OK, MessageBoxImage.Information);
 			}
@@ -122,8 +130,22 @@ namespace CourseWork
 
 		private void ShowGraph_Click(object sender, RoutedEventArgs e)
 		{
-			GraphWindow graphWindow = new GraphWindow(dataModel);
+			graphWindow = new GraphWindow(dataModel);
+			GraphSvg = graphWindow.GetGraphSvg();
 			graphWindow.Show();
+		}
+
+		private void ExportDatasetAs_Click(object sender, RoutedEventArgs e)
+		{
+			SaveFileDialog saveFileDialog = new SaveFileDialog();
+			saveFileDialog.Filter = "HTML files (*.html)|*.html";
+
+			if (saveFileDialog.ShowDialog() == true)
+			{
+				ReportGenerator.GenerateReport(dataModel, GraphSvg, saveFileDialog.FileName);
+
+				MessageBox.Show("Report exported successfully!", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
+			}
 		}
 	}
 }

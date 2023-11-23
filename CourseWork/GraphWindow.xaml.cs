@@ -2,7 +2,10 @@
 using OxyPlot.Annotations;
 using OxyPlot.Axes;
 using OxyPlot.Series;
+using OxyPlot.Wpf;
+using System;
 using System.Windows;
+using System.Windows.Input;
 
 namespace CourseWork
 {
@@ -13,15 +16,39 @@ namespace CourseWork
 	{
 		public GraphWindow(DataModel dataModel)
 		{
-			this.dataModel = dataModel;
+			DataModel = dataModel;
 			InitializeComponent();
 			GraphModel = CreatePlotModel();
 
 			DataContext = this;
 		}
 
+		public string GetGraphSvg()
+		{
+			var svgExporter = new OxyPlot.Wpf.SvgExporter { Width = 400, Height = 300 };
+			return svgExporter.ExportToString(GraphModel);
+		}
+
+		private void Window_KeyDown(object sender, KeyEventArgs e)
+		{
+			switch (e.Key)
+			{
+				case Key.Escape:
+					Close();
+					break;
+				case Key.R:
+					//focus at the minimum point
+					GraphModel.Axes[0].Reset();
+					GraphModel.Axes[1].Reset();
+
+					GraphModel.InvalidatePlot(true);
+					break;		
+			}
+		}
+
 		public PlotModel GraphModel { get; set; }
-		public DataModel dataModel { get; set; }
+		public DataModel DataModel { get; set; }
+		private Point MinPoint { get; set; }
 
 		private PlotModel CreatePlotModel()
 		{
@@ -63,17 +90,34 @@ namespace CourseWork
 				ExtraGridlineThickness = 1.5,
 			});
 
-			plotModel.Series.Add(new FunctionSeries(x => LagrangeInterpolation.GetValue(dataModel.GetPoints(), x), -10, 10, 0.001));
+			Func<double, double> f = x => LagrangeInterpolation.GetValue(DataModel.GetPoints("fx"), x) - LagrangeInterpolation.GetValue(DataModel.GetPoints("gx"), x);
+
+			plotModel.Series.Add(
+				new FunctionSeries(
+				f,
+				-10, 10,
+				1e-3
+				)
+			);
 
 			var minX = FunctionCalculator.FindMinimum(
-				dataModel,
-				dataModel.GetMinimalX(), 
-				dataModel.GetMaximalX(), 
-				10
+				f,
+				DataModel.GetMinimalX("fx") - DataModel.GetMinimalX("gx"),
+				DataModel.GetMaximalX("fx") + DataModel.GetMaximalX("gx"),
+				20,
+				1e-3
 			);
-			var minY = LagrangeInterpolation.GetValue(dataModel.GetPoints(), minX);
+			var minY = f(minX);
+			MinPoint = new Point(minX, minY);
 
 			plotModel.Annotations.Add(new PointAnnotation { X = minX, Y = minY, Text = $"({minX.ToString("0.000")};{minY.ToString("0.000")})" });
+
+			//focus at the minimum point
+			plotModel.Axes[0].Minimum = minX - 10;
+			plotModel.Axes[0].Maximum = minX + 10;
+			plotModel.Axes[1].Minimum = minY - 10;
+			plotModel.Axes[1].Maximum = minY + 10;
+
 			return plotModel;
 		}
 	}

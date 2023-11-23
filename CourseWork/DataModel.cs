@@ -1,7 +1,5 @@
-﻿using DocumentFormat.OpenXml.Office2016.Drawing.ChartDrawing;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.Xml;
 
 namespace CourseWork
 {
@@ -9,38 +7,78 @@ namespace CourseWork
 	{
 		private Dictionary<string, List<Point>> pointsMap = new Dictionary<string, List<Point>>();
 
-		public double GetMinimalX()
+		public double GetMinimalX(string functionName)
 		{
-			double minX = double.MaxValue;
-
-			List<Point> differencePoints = GetPoints();
-
-			foreach (var point in differencePoints)
+			if (pointsMap.ContainsKey(functionName))
 			{
-				if (point.X < minX)
+				double minX = pointsMap[functionName][0].X;
+				foreach (var point in pointsMap[functionName])
 				{
-					minX = point.X;
+					if (point.X < minX)
+					{
+						minX = point.X;
+					}
 				}
+
+				return minX;
 			}
 
-			return minX;
+			return 0;
 		}
 
-		public double GetMaximalX()
+		public double GetMinimalY(string functionName)
 		{
-			double maxX = double.MinValue;
-
-			List<Point> differencePoints = GetPoints();
-
-			foreach (var point in differencePoints)
+			if (pointsMap.ContainsKey(functionName))
 			{
-				if (point.X > maxX)
+				double minY = pointsMap[functionName][0].Y;
+				foreach (var point in pointsMap[functionName])
 				{
-					maxX = point.X;
+					if (point.Y < minY)
+					{
+						minY = point.Y;
+					}
 				}
+
+				return minY;
 			}
 
-			return maxX;
+			return 0;
+		}
+		public double GetMaximalX(string functionName)
+		{
+			if (pointsMap.ContainsKey(functionName))
+			{
+				double maxX = pointsMap[functionName][0].X;
+				foreach (var point in pointsMap[functionName])
+				{
+					if (point.X > maxX)
+					{
+						maxX = point.X;
+					}
+				}
+
+				return maxX;
+			}
+
+			return 0;
+		}
+		public double GetMaximalY(string functionName)
+		{
+			if (pointsMap.ContainsKey(functionName))
+			{
+				double maxY = pointsMap[functionName][0].Y;
+				foreach (var point in pointsMap[functionName])
+				{
+					if (point.Y > maxY)
+					{
+						maxY = point.Y;
+					}
+				}
+
+				return maxY;
+			}
+
+			return 0;
 		}
 
 		public void SetPointsMap(Dictionary<string, List<Point>> pointsMap)
@@ -68,31 +106,6 @@ namespace CourseWork
 				return pointsMap[functionName];
 			}
 			return new List<Point>();
-		}
-
-		public List<Point> GetPoints()
-		{
-			List<Point> differencePoints = new List<Point>();
-
-			// Проверяем, что у нас есть одинаковое количество точек для обеих функций
-			if (pointsMap.ContainsKey("fx") && pointsMap.ContainsKey("gx") &&
-				pointsMap["fx"].Count == pointsMap["gx"].Count)
-			{
-				for (int i = 0; i < pointsMap["fx"].Count; i++)
-				{
-					double differenceX = pointsMap["fx"][i].X; // Берем значение X из функции fx
-					double differenceY = pointsMap["fx"][i].Y - pointsMap["gx"][i].Y; // Вычитаем значение Y функции gx из значения Y функции fx
-
-					Point differencePoint = new Point(differenceX, differenceY);
-					differencePoints.Add(differencePoint);
-				}
-			}
-			else
-			{
-				Console.WriteLine("Количество точек для функций fx и gx не совпадает или функции не заданы.");
-			}
-
-			return differencePoints;
 		}
 
 		public void Clear(string functionName)
