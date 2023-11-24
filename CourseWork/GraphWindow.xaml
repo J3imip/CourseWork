@@ -7,7 +7,6 @@
         Height="400"
         Width="800">
     <Grid>
-        <oxy:PlotView x:Name="PlotView" Grid.Row="0" Grid.Column="0"  Model="{Binding GraphModel}">
-        </oxy:PlotView>
+        <oxy:PlotView x:Name="PlotView" Grid.Row="0" Grid.Column="0"  Model="{Binding GraphModel}"/>
     </Grid>
 </Window>

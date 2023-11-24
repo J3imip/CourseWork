@@ -80,8 +80,22 @@
             </StackPanel>
 
             <DockPanel Margin="0, 15, 0, 0" x:Name="functionsRadio">
-                <RadioButton x:Name="fxRadioButton" Content="f(x)" GroupName="functions" IsChecked="True" FontSize="20" VerticalContentAlignment="Center" Click="fxRadioButton_Click"/>
-                <RadioButton x:Name="gxRadioButton" Content="g(x)" GroupName="functions" IsChecked="False" RenderTransformOrigin="0.094,-1.136" HorizontalAlignment="Right" FontSize="20" VerticalContentAlignment="Center" Click="gxRadioButton_Click"/>
+                <RadioButton 
+                    x:Name="fxRadioButton" 
+                    Content="f(x)" 
+                    GroupName="functions" 
+                    IsChecked="True" FontSize="20" 
+                    VerticalContentAlignment="Center" 
+                    Click="ChangeFunction_Click"/>
+                <RadioButton 
+                    x:Name="gxRadioButton"
+                    Content="g(x)" 
+                    GroupName="functions" 
+                    IsChecked="False" 
+                    RenderTransformOrigin="0.094,-1.136" 
+                    HorizontalAlignment="Right" FontSize="20"
+                    VerticalContentAlignment="Center" 
+                    Click="ChangeFunction_Click"/>
             </DockPanel>
         </DockPanel>
     </Grid>
