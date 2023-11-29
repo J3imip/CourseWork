@@ -4,7 +4,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         mc:Ignorable="d"
-        Title="MainWindow" Height="350" Width="230"
+        Title="Fibonacci" Height="350" Width="230"
         WindowStartupLocation="CenterScreen"
         KeyDown="Window_KeyDown">
     <Window.Resources>
@@ -48,7 +48,7 @@
                 <Separator/>
                 <MenuItem Header="_Exit"/>
             </MenuItem>
-            <!-- Other Menu Items -->
+            <MenuItem Header="_Help" Click="Help_Click"/>
         </Menu>
         <!-- Input Fields, Data Tables, Text Boxes -->
         <DockPanel Margin="7,30,0,7" HorizontalAlignment="Left" Width="200">

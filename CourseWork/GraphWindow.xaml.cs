@@ -1,4 +1,7 @@
-﻿using OxyPlot;
+﻿using Calculations;
+using DocumentFormat.OpenXml.Wordprocessing;
+using OxyPlot;
+using OxyPlot.Annotations;
 using System.Windows;
 using System.Windows.Input;
 using Point = Calculations.Point;
@@ -10,6 +13,10 @@ namespace CourseWork
 	/// </summary>
 	public partial class GraphWindow : Window
 	{
+		private double Zoom = 15;
+		private double Accuracy = 1e-3;
+		private int FibonacciIterations = 20;
+
 		public PlotModel GraphModel { get; set; }
 		public DataModel DataModel { get; set; }
 		public string GraphSVG { get; set; }
@@ -21,10 +28,13 @@ namespace CourseWork
 			DataModel = dataModel;
 			InitializeComponent();
 
-			gp = new(DataModel);
+			gp = new(DataModel, Zoom, Accuracy, FibonacciIterations);
 
 			(GraphModel, MinPoint) = CreatePlotModel();
 			GraphSVG = GetGraphSvg();
+
+			MinXTextBox.Text = (DataModel.GetMinimalX("fx") - DataModel.GetMinimalX("gx")).ToString();
+			MaxXTextBox.Text = (DataModel.GetMaximalX("fx") + DataModel.GetMaximalX("gx")).ToString();
 
 			DataContext = this;
 		}
@@ -49,7 +59,23 @@ namespace CourseWork
 
 					GraphModel.InvalidatePlot(true);
 					break;
+				case Key.Enter:
+					ApplyLimitsButton_Click(sender, e);
+					break;
 			}
+		}
+
+		private void ApplyLimitsButton_Click(object sender, RoutedEventArgs e)
+		{
+			MinXTextBox.Text = MinXTextBox.Text.Replace('.', ',');
+			MaxXTextBox.Text = MaxXTextBox.Text.Replace('.', ',');
+
+			(GraphModel, MinPoint) = gp.UpdateMinPoint(
+				double.Parse(MinXTextBox.Text),
+				double.Parse(MaxXTextBox.Text)
+			);
+			GraphSVG = GetGraphSvg();
+			GraphModel.InvalidatePlot(true);
 		}
 	}
 }

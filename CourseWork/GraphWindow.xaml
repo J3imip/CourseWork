@@ -7,6 +7,27 @@
         Height="400"
         Width="800">
     <Grid>
-        <oxy:PlotView x:Name="PlotView" Grid.Row="0" Grid.Column="0"  Model="{Binding GraphModel}"/>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <DockPanel>
+            <StackPanel Grid.Row="0" Orientation="Horizontal">
+                <TextBlock Text="Min X:" Margin="5"/>
+                <TextBox x:Name="MinXTextBox" Width="30" Margin="5"/>
+            </StackPanel>
+
+            <StackPanel Grid.Row="1" Orientation="Horizontal">
+                <TextBlock Text="Max X:" Margin="5"/>
+                <TextBox x:Name="MaxXTextBox" Width="30" Margin="5"/>
+                <Button x:Name="ApplyLimitsButton" Grid.Row="2" DockPanel.Dock="Left" Content="Apply" Margin="5" Click="ApplyLimitsButton_Click" Width="40"/>
+            </StackPanel>
+
+        </DockPanel>
+
+        <!-- Поле для отображения графика -->
+        <oxy:PlotView x:Name="PlotView" Grid.Row="2" Model="{Binding GraphModel}"/>
     </Grid>
 </Window>

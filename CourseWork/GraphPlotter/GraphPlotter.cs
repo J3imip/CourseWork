@@ -10,23 +10,31 @@ namespace CourseWork;
 
 internal class GraphPlotter : IGraphPlotter
 {
-	private double Zoom = 10;
-	private double Accuracy = 1e-3;
-	private int FibonacciIterations = 20;
+	private double Zoom;
+	private double Accuracy;
+	private int FibonacciIterations;
 	private DataModel dm;
 	private Point? MinPoint;
+	private PlotModel plotModel;
 
 	public GraphPlotter(
-		DataModel dm
+		DataModel dm,
+		double Zoom,
+		double Accuracy,
+		int FibonacciIterations
 	)
 	{
+		this.Zoom = Zoom;
+		this.Accuracy = Accuracy;
+		this.FibonacciIterations = FibonacciIterations;
+
+		plotModel = new PlotModel();
+		
 		this.dm = dm;
 	}
 
 	public (PlotModel, Point) CreatePlotModel()
 	{
-		var plotModel = new PlotModel();
-
 		// Adding a horizontal axis (X-axis) at the middle of the screen
 		plotModel.Axes.Add(new LinearAxis
 		{
@@ -63,6 +71,9 @@ internal class GraphPlotter : IGraphPlotter
 			ExtraGridlineThickness = 1.5,
 		});
 
+		var minXLimit = dm.GetMinimalX("fx") - dm.GetMinimalX("gx");
+		var maxXLimit = dm.GetMaximalX("fx") + dm.GetMaximalX("gx");
+
 		Func<double, double> f = x =>
 			LagrangeInterpolation.GetValue(dm.GetPoints("fx"), x) -
 			LagrangeInterpolation.GetValue(dm.GetPoints("gx"), x);
@@ -70,16 +81,16 @@ internal class GraphPlotter : IGraphPlotter
 		plotModel.Series.Add(
 			new FunctionSeries(
 				f,
-				dm.GetMinimalX("fx") - dm.GetMinimalX("gx") - Zoom,
-				dm.GetMaximalX("fx") + dm.GetMaximalX("gx") + Zoom,
+				minXLimit - Zoom,
+				maxXLimit + Zoom,
 				Accuracy
 			)
 		);
 
 		var minX = Fibonacci.FindMinimum(
 			f,
-			dm.GetMinimalX("fx") - dm.GetMinimalX("gx"),
-			dm.GetMaximalX("fx") + dm.GetMaximalX("gx"),
+			minXLimit,
+			maxXLimit,
 			FibonacciIterations,
 			Accuracy
 		);
@@ -91,6 +102,34 @@ internal class GraphPlotter : IGraphPlotter
 		);
 
 		//focus at the minimum point
+		plotModel.Axes[0].Minimum = MinPoint.X - Zoom;
+		plotModel.Axes[0].Maximum = MinPoint.X + Zoom;
+		plotModel.Axes[1].Minimum = MinPoint.Y - Zoom;
+		plotModel.Axes[1].Maximum = MinPoint.Y + Zoom;
+
+		return (plotModel, MinPoint);
+	}
+
+	public (PlotModel, Point) UpdateMinPoint(double xMin, double xMax)
+	{
+		Func<double, double> f = x =>
+			LagrangeInterpolation.GetValue(dm.GetPoints("fx"), x) -
+			LagrangeInterpolation.GetValue(dm.GetPoints("gx"), x); 
+
+		var fibMinX = Fibonacci.FindMinimum(
+			f,
+			xMin,
+			xMax,
+			20
+		);
+
+		MinPoint = new Point(fibMinX, f(fibMinX));
+
+		plotModel.Annotations.Clear();
+		plotModel.Annotations.Add(
+			new PointAnnotation { X = MinPoint.X, Y = MinPoint.Y, Text = $"({MinPoint.X:0.000};{MinPoint.Y:0.000})" }
+		);
+
 		plotModel.Axes[0].Minimum = MinPoint.X - Zoom;
 		plotModel.Axes[0].Maximum = MinPoint.X + Zoom;
 		plotModel.Axes[1].Minimum = MinPoint.Y - Zoom;

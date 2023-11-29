@@ -1,7 +1,6 @@
 ﻿using Microsoft.Win32;
 using System.Collections.ObjectModel;
 using System.Windows.Controls;
-using Calculations;
 using System.Windows;
 
 namespace CourseWork;

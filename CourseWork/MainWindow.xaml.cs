@@ -73,5 +73,19 @@ namespace CourseWork
 			base.OnClosed(e);
 			Application.Current.Shutdown();
 		}
+
+		private void Help_Click(object sender, RoutedEventArgs e)
+		{
+			MessageBox.Show(
+				"1. To add a point, click on the last row of the table and enter the values of x and y.\n" +
+				"2. To remove a point, select it and click the \"Remove point\" button.\n" +
+				"3. To clear the table, click the \"Clear\" button.\n" +
+				"\nGraph controls:\n" +
+				"R - reset zoom\n",
+				"Help",
+				MessageBoxButton.OK,
+				MessageBoxImage.Information
+			);
+		}
 	}
 }
